@@ -4,9 +4,24 @@ const http = require("http");
 
 const PORT = process.env.PORT || 5000;
 
+const router = require("./router");
+
 const app = express();
 const server = http.createServer(app);
 // io is an instance of socketio
 const io = socketio(server);
+
+// io.on runs when we have a client connection on our io instance
+// register client joining and leaving
+// callback function ahead of 'connection'
+io.on("connection", (socket) => {
+  console.log("We have a new connection!!");
+
+  socket.on("disconnect", () => {
+    console.log("User has left");
+  });
+});
+
+app.use(router);
 
 server.listen(PORT, () => console.log(`Server has started on port ${PORT}`));
