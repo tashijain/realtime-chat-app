@@ -16,6 +16,7 @@ const io = socketio(server);
 // io.on runs when we have a client connection on our io instance
 // register client joining and leaving
 // callback function ahead of 'connection'
+// "emit" happens on the front-end and "on" part happens on backend
 io.on("connection", (socket) => {
   socket.on("join", ({ name, room }, callback) => {
     const { user, error } = addUser({ id: socket.id, name, room });
@@ -25,7 +26,7 @@ io.on("connection", (socket) => {
     // telling user that they are welcome to the chat
     socket.emit("message", {
       user: "admin",
-      text: `${user.name}, welcome to the room ${user.room}`,
+      text: `${user.name}, welcome to the room ${user.room}!`,
     });
 
     // will send message to every user besides this user who has joined
@@ -37,6 +38,16 @@ io.on("connection", (socket) => {
     socket.join(user.room);
 
     // error handling or any callbakc after a specific event has been emitted
+    callback();
+  });
+
+  // expect the event on the backend
+  // callback that is run after vent is emitted
+  socket.on("sendMessage", (message, callback) => {
+    const user = getUser(socket.id);
+
+    io.to(user.room).emit("message", { user: user.name, text: message });
+
     callback();
   });
 
