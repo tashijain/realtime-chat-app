@@ -17,7 +17,16 @@ const Chat = ({ location }) => {
     socket = io(ENDPOINT);
     setName(name);
     setRoom(room);
-    console.log(socket);
+
+    // 3rd param is the callback from io.on in index.js server side
+    socket.emit("join", { name, room }, () => {});
+
+    // happens at unmounting - leaving chat
+    return () => {
+      socket.emit("disconnect");
+      socket.off();
+    };
+
     // basically we only rerender when these two values ENDPOINT or location.search change
   }, [ENDPOINT, location.search]);
   return <h1>Chat</h1>;
