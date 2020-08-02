@@ -27,7 +27,7 @@ io.on("connection", (socket) => {
     // telling user that they are welcome to the chat
     socket.emit("message", {
       user: "admin",
-      text: `${user.name}, welcome to the room ${user.room}!`,
+      text: `${user.name}, Welcome to room, ${user.room}!`,
     });
 
     // will send message to every user besides this user who has joined
@@ -66,7 +66,7 @@ io.on("connection", (socket) => {
     if (user) {
       io.to(user.room).emit("message", {
         user: "admin",
-        text: `${user.nmae} has left.`,
+        text: `${user.name} has left.`,
       });
     }
   });
